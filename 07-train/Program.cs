@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace _07_train
 {
@@ -13,32 +13,32 @@ namespace _07_train
     class Station
     {
         public void Work()
-        {            
-            bool isWork = true;           
-            
+        {
+            bool isWork = true;
+
             while (isWork)
             {
                 string startingRoute = " Пусто";
                 string endRoute = " Пусто";
-                int reservedWagon = 0;
-                int compartment = 0;
-                int wagonSV = 0;
                 int passengers = 0;
-                Scoreboard(startingRoute, endRoute, reservedWagon, compartment, wagonSV, passengers);
-                CreateWay(out startingRoute, out endRoute);
+                Wagon reservedWagon = new Wagon(54);
+                Wagon compartment = new Wagon(32);
+                Wagon wagonSV = new Wagon(18);
                 Train train = new Train();
-                passengers = train.BuyTickets();
+                OutputInScoreboard(startingRoute, endRoute, reservedWagon.ShowQuantity(), compartment.ShowQuantity(), wagonSV.ShowQuantity(), passengers);
+                CreateWay(out startingRoute, out endRoute);
+                passengers = train.AddPassengers();
 
                 while (passengers > 0)
                 {
-                    Scoreboard(startingRoute, endRoute, reservedWagon, compartment, wagonSV, passengers);
-                    FormTarin(ref passengers, ref reservedWagon, ref compartment, ref wagonSV);
+                    OutputInScoreboard(startingRoute, endRoute, reservedWagon.ShowQuantity(), compartment.ShowQuantity(), wagonSV.ShowQuantity(), passengers);
+                    FormTarin(reservedWagon, compartment, wagonSV, passengers);
                 }
 
-                Scoreboard(startingRoute, endRoute, reservedWagon, compartment, wagonSV, passengers);
-                Console.WriteLine("Поезд готов к отправке, нажмите любую клавишу, чтобы составить новый маршрут или [v], чтобы выйти..");
+                OutputInScoreboard(startingRoute, endRoute, reservedWagon.ShowQuantity(), compartment.ShowQuantity(), wagonSV.ShowQuantity(), passengers);
+                Console.WriteLine("Поезд готов к отправке, нажмите любую клавишу, чтобы составить новый маршрут или [j], чтобы выйти..");
 
-                if (Console.ReadLine() == "v")
+                if (Console.ReadLine() == "j")
                 {
                     isWork = false;
                 }
@@ -47,31 +47,28 @@ namespace _07_train
             }
         }
 
-        public void FormTarin(ref int passengers, ref int reservedWagon, ref int compartment, ref int wagonSV)
+        public void FormTarin(Wagon reserved, Wagon compartment,Wagon wagonSV,int passengers)
         {
             const string CommandReservedWagon = "1";
             const string CommandCompartment = "2";
             const string CommandWagonSV = "3";
 
-            int capacityReservedWagon = 54;
-            int capacityCompartment = 32;
-            int capacityWagonSV = 18;
-
             Console.WriteLine("Добавте вагон.");
-            Console.WriteLine($"{CommandReservedWagon})Плацкартный Вагон  - {capacityReservedWagon} мест.\n{CommandCompartment})Купе - {capacityCompartment}мест.\n{CommandWagonSV})Вагон СВ - {capacityWagonSV}мест.");
+            Console.WriteLine($"{CommandReservedWagon})Плацкартный Вагон  - {reserved.ShowCompartment()} мест.\n{CommandCompartment})Купе - {compartment.ShowCompartment()}мест.\n{CommandWagonSV})Вагон СВ - {wagonSV.ShowCompartment()}мест.");
             Console.Write("Введите номер вагона:");
-            string userInput = Console.ReadLine();
+
+            string userInput = Console.ReadLine();            
 
             switch (userInput)
             {
-                 case CommandReservedWagon:
-                    AddWagon(ref passengers, ref capacityReservedWagon, ref reservedWagon);
+                case CommandReservedWagon:
+                    reserved.AddWagon(passengers);
                     break;
-                 case CommandCompartment:
-                    AddWagon(ref passengers, ref capacityCompartment, ref compartment);
+                case CommandCompartment:
+                    compartment.AddWagon(passengers);
                     break;
-                 case CommandWagonSV:
-                    AddWagon(ref passengers, ref capacityWagonSV, ref wagonSV);
+                case CommandWagonSV:
+                    wagonSV.AddWagon(passengers);
                     break;
             }
         }
@@ -87,34 +84,56 @@ namespace _07_train
             Console.Clear();
         }
 
-        public void Scoreboard(string startingRoute, string endRoute, int reservedCar, int compartment, int carSV, int passengers)
-        {            
+        public void OutputInScoreboard(string startingRoute, string endRoute, int reservedCar, int compartment, int carSV, int passengers)
+        {
             Console.WriteLine("Текущий маршрут:\n");
-            Console.WriteLine("Начало маршрута:" +  startingRoute );
+            Console.WriteLine("Начало маршрута:" + startingRoute);
             Console.WriteLine("Конечный пунтк:" + endRoute + "\n");
             Console.WriteLine($"Состав поезда:\nПлацкартный вагон:{reservedCar}\nКупе:{compartment}\nВагон СВ:{carSV}\n");
 
-            if( passengers > 0) { Console.WriteLine("Необходимо разместить: " + passengers + " пасажиров"); }
+            if (passengers > 0) { Console.WriteLine("Необходимо разместить: " + passengers + " пасажиров"); }
             else { Console.WriteLine("Поезд укомплектован"); }
-            
+
             Console.WriteLine("====================================================================================\n");
         }
+       
+    }
 
-        private void AddWagon(ref int passengers,ref int capacity,ref int wagon)
+    class Wagon
+    {
+        private int _quantity;
+        private int _compartment;
+
+        public Wagon(int compartment)
         {
-            passengers -= capacity;
-            wagon++;
+            _compartment = compartment;
+        }
+
+        public void AddWagon(int passengers)
+        {
+            passengers -= _compartment;
+            _quantity++;
             Console.Clear();
+        }
+
+        public int ShowQuantity()
+        {
+            return _quantity;
+        }
+
+        public int ShowCompartment()
+        {
+            return _compartment;
         }
     }
 
     class Train
-    {   
-        public int BuyTickets()
+    {
+        public int AddPassengers()
         {
             Random random = new Random();
-            int quantityPassengers = random.Next(100, 1000);
-            return quantityPassengers;
+            int quantity = random.Next(100, 1000);
+            return quantity;
         }
     }
 }
