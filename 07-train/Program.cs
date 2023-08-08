@@ -47,7 +47,7 @@ namespace _07_train
             }
         }
 
-        public void FormTarin(Wagon reserved, Wagon compartment,Wagon wagonSV,int passengers)
+        public void FormTarin(Wagon reserved, Wagon compartment,Wagon wagonSV, int passengers)
         {
             const string CommandReservedWagon = "1";
             const string CommandCompartment = "2";
@@ -109,11 +109,12 @@ namespace _07_train
             _compartment = compartment;
         }
 
-        public void AddWagon(int passengers)
+        public int AddWagon(int passengers)
         {
             passengers -= _compartment;
             _quantity++;
             Console.Clear();
+            return passengers;
         }
 
         public int ShowQuantity()
@@ -124,6 +125,12 @@ namespace _07_train
         public int ShowCompartment()
         {
             return _compartment;
+        }
+
+        public int QuantityPlus()
+        {
+            _quantity++;
+            return _quantity;
         }
     }
 
@@ -136,4 +143,4 @@ namespace _07_train
             return quantity;
         }
     }
-}      
+}
