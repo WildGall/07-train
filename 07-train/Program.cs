@@ -32,7 +32,7 @@ namespace _07_train
                 while (passengers > 0)
                 {
                     OutputInScoreboard(startingRoute, endRoute, reservedWagon.ShowQuantity(), compartment.ShowQuantity(), wagonSV.ShowQuantity(), passengers);
-                    FormTarin(reservedWagon, compartment, wagonSV, passengers);
+                    passengers = FormTarin(reservedWagon, compartment, wagonSV, passengers);
                 }
 
                 OutputInScoreboard(startingRoute, endRoute, reservedWagon.ShowQuantity(), compartment.ShowQuantity(), wagonSV.ShowQuantity(), passengers);
@@ -47,7 +47,7 @@ namespace _07_train
             }
         }
 
-        public void FormTarin(Wagon reserved, Wagon compartment,Wagon wagonSV, int passengers)
+        public int FormTarin(Wagon reserved, Wagon compartment,Wagon wagonSV, int passengers)
         {
             const string CommandReservedWagon = "1";
             const string CommandCompartment = "2";
@@ -62,15 +62,17 @@ namespace _07_train
             switch (userInput)
             {
                 case CommandReservedWagon:
-                    reserved.AddWagon(passengers);
+                    passengers = reserved.AddWagon(passengers);
                     break;
                 case CommandCompartment:
-                    compartment.AddWagon(passengers);
+                    passengers = compartment.AddWagon(passengers);
                     break;
                 case CommandWagonSV:
-                    wagonSV.AddWagon(passengers);
+                    passengers = wagonSV.AddWagon(passengers);
                     break;
             }
+
+            return passengers;
         }
 
         public void CreateWay(out string startingRoute, out string endRoute)
@@ -112,9 +114,10 @@ namespace _07_train
         public int AddWagon(int passengers)
         {
             passengers -= _compartment;
-            _quantity++;
-            Console.Clear();
+            _quantity++;   
+            Console.Clear();   
             return passengers;
+
         }
 
         public int ShowQuantity()
